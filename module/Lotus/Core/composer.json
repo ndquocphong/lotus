@@ -1,0 +1,11 @@
+{
+    "name": "lotus/core",
+    "description": "The core module of Lotus framework",
+    "type": "library",
+    "authors": [
+        {
+            "name": "ndqphong",
+            "email": "ndquocphong@gmail.com"
+        }
+    ]
+}

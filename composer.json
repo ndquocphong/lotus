@@ -1,0 +1,12 @@
+{
+    "name": "ndqphong/lotus",
+    "description": "My simple framework",
+    "type": "project",
+    "authors": [
+        {
+            "name": "ndqphong",
+            "email": "ndquocphong@gmail.com"
+        }
+    ],
+    "require": {}
+}
