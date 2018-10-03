@@ -8,5 +8,7 @@
             "email": "ndquocphong@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "zendframework/zend-diactoros": "^2.0-stable"
+    }
 }

@@ -1,10 +1,19 @@
 <?php
 namespace Lotus\Core;
 
+use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Response;
+
 class Application
 {
-    public function run()
+    public function run(): void
     {
-       echo 'Hello world';
+        $request = ServerRequestFactory::fromGlobals();
+
+        $response = new Response();
+        $response->getBody()->write('hello world');
+
+
+        echo $response->getBody();
     }
 }
