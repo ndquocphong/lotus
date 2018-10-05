@@ -8,7 +8,14 @@
             "email": "ndquocphong@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Lotus\\": "src/"
+        }
+    },
     "require": {
-        "zendframework/zend-diactoros": "^2.0-stable"
+        "zendframework/zend-diactoros": "^2.0-stable",
+        "php-di/php-di": "^6.0-stable",
+        "psr/http-server-middleware": "^1.0-stable"
     }
 }
