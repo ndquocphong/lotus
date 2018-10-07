@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Lotus\Infrastructure\DI;
+namespace Lotus\Core\Infrastructure\DI;
 
 class Container extends \DI\Container
 {

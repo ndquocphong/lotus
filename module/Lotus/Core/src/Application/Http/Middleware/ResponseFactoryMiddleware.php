@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Lotus\Infrastructure\Http\Server;
+namespace Lotus\Core\Application\Http\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -9,7 +9,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response;
 
-class ResponseHandlerMiddleware implements MiddlewareInterface
+class ResponseFactoryMiddleware implements MiddlewareInterface
 {
     /**
      * @param ServerRequestInterface $request
@@ -19,7 +19,7 @@ class ResponseHandlerMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = new Response();
-        $response->getBody()->write('Hello world');
+        $response->getBody()->write('Hello world! I am Lotus');
 
         return $response;
     }
