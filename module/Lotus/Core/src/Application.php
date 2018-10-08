@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Lotus\Core;
 
-use Lotus\Core\Application\Http\Middleware\ResponseFactoryMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequestFactory;
 use Lotus\Core\Infrastructure\DI\Container;
 use Lotus\Core\Infrastructure\DI\ContainerBuilder;
 use Lotus\Core\Infrastructure\Http\Server\RequestHandler;
+use Lotus\Core\Application\Http\Middleware\ResponseFactoryMiddleware;
 
 class Application
 {
