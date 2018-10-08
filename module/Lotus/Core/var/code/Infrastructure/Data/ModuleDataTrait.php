@@ -1,5 +1,5 @@
 <?php
-namespace Lotus\Core\Infrastructure\Database;
+namespace Lotus\Core\Infrastructure\Data;
 
 use Lotus\Core\Domain\Model\Module;
 
@@ -11,7 +11,7 @@ trait ModuleDataTrait
             'name' => 'Lotus Core Module',
             'description' => 'Lotus Core Module',
             'version' => '1.0.0',
-            'status' => Module::STATUS_INSTALLED
+            'status' => Module::STATUS_ENABLED
         ]
     ];
 }

@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Lotus\Core;
 
+use Lotus\Core\Domain\Model\Module;
+use Lotus\Core\Domain\Repository\ModuleRepository;
+use Lotus\Core\Infrastructure\Database\DML\ColumnWhereDML;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequestFactory;
 use Lotus\Core\Infrastructure\DI\Container;
@@ -26,6 +29,14 @@ class Application
                 RequestHandler::class => \DI\create(RequestHandler::class)->constructor([\DI\get(ResponseFactoryMiddleware::class)])
             ]);
             $this->container = $containerBuilder->build();
+
+
+            $enabledModules = $this->container->get(ModuleRepository::class)->findBy([
+                new ColumnWhereDML('status', Module::STATUS_ENABLED),
+            ]);
+            foreach ($enabledModules as $module) {
+                $module->sayHello();
+            }
 
             $request = $this->container->get(ServerRequestInterface::class);
             $requestHandler = $this->container->get(RequestHandler::class);
