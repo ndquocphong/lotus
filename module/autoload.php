@@ -23,7 +23,10 @@ foreach (new \DirectoryIterator(MODULE_DIR) as $vendor) {
 
         $autoloader->addPsr4(
             $vendor .'\\'.$package.'\\',
-            $package->getRealPath() . DIRECTORY_SEPARATOR . 'src'
+            [
+                $package->getRealPath() . DIRECTORY_SEPARATOR . 'src',
+                $package->getRealPath() . DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'code',
+            ]
         );
     }
 }
