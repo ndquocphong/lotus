@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace Lotus\Core;
 
+use Composer\Autoload\ClassLoader;
+use Lotus\Bar\Bar;
 use Lotus\Core\Domain\Model\Module;
 use Lotus\Core\Domain\Repository\ModuleRepository;
 use Lotus\Core\Infrastructure\Database\DML\ColumnWhereDML;
+use Lotus\Foo\Foo;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequestFactory;
 use Lotus\Core\Infrastructure\DI\Container;
@@ -21,16 +24,46 @@ class Application
     protected $container;
 
     /**
+     * @var ClassLoader
+     */
+    protected $autoloader;
+
+    /**
+     * @var ModuleRepository
+     */
+    protected $moduleRepository;
+
+    /**
+     * Application constructor.
+     *
+     * @param ClassLoader $classLoader
+     */
+    public function __construct(ClassLoader $classLoader)
+    {
+        $this->autoloader = $classLoader;
+        $this->moduleRepository = new ModuleRepository();
+    }
+
+    /**
+     * @return ClassLoader
+     */
+    public function getAutoloader(): ClassLoader
+    {
+        return $this->autoloader;
+    }
+
+    /**
      * Initialize DI container
      *
      * @throws \Exception
      */
-    protected function initializeDIContainer()
+    protected function initializeDIContainer(): void
     {
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions([
             ServerRequestInterface::class => ServerRequestFactory::fromGlobals(),
-            RequestHandler::class => \DI\create(RequestHandler::class)->constructor([\DI\get(ResponseFactoryMiddleware::class)])
+            RequestHandler::class => \DI\create(RequestHandler::class)->constructor([\DI\get(ResponseFactoryMiddleware::class)]),
+            ModuleRepository::class => $this->moduleRepository
         ]);
         $this->container = $containerBuilder->build();
     }
@@ -40,33 +73,27 @@ class Application
      */
     protected function boot(): void
     {
-        try {
-            $this->initializeDIContainer();
-
-            $enabledModules = $this->container->get(ModuleRepository::class)->findBy([
-                new ColumnWhereDML('status', Module::STATUS_ENABLED),
-            ]);
-            foreach ($enabledModules as $module) {
-                $module->boot();
-            }
-
-        } catch (\Exception $e) {
-
+        $enabledModules = $this->moduleRepository->findBy([
+            new ColumnWhereDML('status', Module::STATUS_ENABLED),
+        ]);
+        foreach ($enabledModules as $module) {
+            $module->boot($this);
         }
+
+        $this->initializeDIContainer();
     }
 
     public function run(): void
     {
-        try {
-            $this->boot();
+        $this->boot();
 
-            $request = $this->container->get(ServerRequestInterface::class);
-            $requestHandler = $this->container->get(RequestHandler::class);
-            $response = $requestHandler->handle($request);
+            $this->container->get(Foo::class)->sayHello();
+            $this->container->get(Bar::class)->sayHello();
 
-            echo $response->getBody();
-        } catch (\Exception $e) {
+        $request = $this->container->get(ServerRequestInterface::class);
+        $requestHandler = $this->container->get(RequestHandler::class);
+        $response = $requestHandler->handle($request);
 
-        }
+        echo $response->getBody();
     }
 }

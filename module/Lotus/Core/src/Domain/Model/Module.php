@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Lotus\Core\Domain\Model;
 
+use Lotus\Core\Application;
+
 class Module
 {
     const STATUS_INSTALLED = 0;
@@ -14,6 +16,11 @@ class Module
      * @var string
      */
     protected $id;
+
+    /**
+     * @var string
+     */
+    protected $path;
 
     /**
      * @var string
@@ -50,6 +57,24 @@ class Module
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param $path
+     * @return $this
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
         return $this;
     }
 
@@ -126,10 +151,20 @@ class Module
     }
 
     /**
+     * Boot module
      *
+     * @param Application $application
      */
-    public function boot()
+    public function boot(Application $application): void
     {
-
+        $path = str_replace('/', DIRECTORY_SEPARATOR, $this->getPath());
+        $namespace = str_replace('/', '\\', $this->getPath());
+        $application->getAutoloader()->addPsr4(
+            $namespace . '\\',
+            [
+                MODULE_DIR . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . 'src',
+                MODULE_DIR . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'code',
+            ]
+        );
     }
 }

@@ -8,10 +8,11 @@ trait ModuleDataTrait
     protected $data = [
         'lotus/core' => [
             'id' => 'lotus/core',
+            'path' => 'Lotus/Core',
             'name' => 'Lotus Core Module',
             'description' => 'Lotus Core Module',
             'version' => '1.0.0',
             'status' => Module::STATUS_ENABLED
-        ]
+        ],
     ];
 }

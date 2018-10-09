@@ -37,6 +37,7 @@ class ModuleRepository implements RepositoryInterface
         foreach ($result as $k => $row) {
             $module = new Module();
             $module->setId($row['id']);
+            $module->setPath($row['path']);
             $module->setName($row['name']);
             $module->setDescription($row['description']);
             $module->setVersion($row['version']);
