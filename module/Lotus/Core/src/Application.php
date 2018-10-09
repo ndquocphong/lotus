@@ -20,23 +20,45 @@ class Application
      */
     protected $container;
 
-    public function run(): void
+    /**
+     * Initialize DI container
+     *
+     * @throws \Exception
+     */
+    protected function initializeDIContainer()
+    {
+        $containerBuilder = new ContainerBuilder();
+        $containerBuilder->addDefinitions([
+            ServerRequestInterface::class => ServerRequestFactory::fromGlobals(),
+            RequestHandler::class => \DI\create(RequestHandler::class)->constructor([\DI\get(ResponseFactoryMiddleware::class)])
+        ]);
+        $this->container = $containerBuilder->build();
+    }
+
+    /**
+     * Boot application
+     */
+    protected function boot(): void
     {
         try {
-            $containerBuilder = new ContainerBuilder();
-            $containerBuilder->addDefinitions([
-                ServerRequestInterface::class => ServerRequestFactory::fromGlobals(),
-                RequestHandler::class => \DI\create(RequestHandler::class)->constructor([\DI\get(ResponseFactoryMiddleware::class)])
-            ]);
-            $this->container = $containerBuilder->build();
-
+            $this->initializeDIContainer();
 
             $enabledModules = $this->container->get(ModuleRepository::class)->findBy([
                 new ColumnWhereDML('status', Module::STATUS_ENABLED),
             ]);
             foreach ($enabledModules as $module) {
-                $module->sayHello();
+                $module->boot();
             }
+
+        } catch (\Exception $e) {
+
+        }
+    }
+
+    public function run(): void
+    {
+        try {
+            $this->boot();
 
             $request = $this->container->get(ServerRequestInterface::class);
             $requestHandler = $this->container->get(RequestHandler::class);

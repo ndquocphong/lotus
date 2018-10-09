@@ -6,8 +6,8 @@ namespace Lotus\Core\Infrastructure\Database;
 interface RepositoryInterface
 {
     /**
-     * @param array $dmls
+     * @param array $DMLs
      * @return mixed
      */
-    public function findBy(array $dmls);
+    public function findBy(array $DMLs);
 }

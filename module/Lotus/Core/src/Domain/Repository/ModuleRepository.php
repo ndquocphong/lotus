@@ -15,13 +15,13 @@ class ModuleRepository implements RepositoryInterface
     /**
      * {@inheritdoc}
      *
-     * @param array $dmls
+     * @param array $DMLs
      * @return Module[]
      */
-    public function findBy(array $dmls)
+    public function findBy(array $DMLs)
     {
         $result = $this->data;
-        foreach ($dmls as $dml) {
+        foreach ($DMLs as $dml) {
             if ($dml instanceof ColumnWhereDML) {
                 foreach ($result as $k => $row) {
                     if (!isset($row[$dml->column])) {
@@ -46,10 +46,5 @@ class ModuleRepository implements RepositoryInterface
         }
 
         return $result;
-    }
-
-    public function findOneBy()
-    {
-
     }
 }
