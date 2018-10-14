@@ -13,6 +13,7 @@
         "php-di/php-di": "^6.0-stable",
         "psr/http-server-middleware": "^1.0-stable",
         "doctrine/orm": "^2.6-stable",
-        "nette/php-generator": "^3.0-stable"
+        "nette/php-generator": "^3.0-stable",
+        "symfony/event-dispatcher": "^4.0-stable"
     }
 }

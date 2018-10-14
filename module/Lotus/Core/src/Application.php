@@ -4,13 +4,15 @@ declare(strict_types=1);
 namespace Lotus\Core;
 
 use Composer\Autoload\ClassLoader;
-use Lotus\Bar\Bar;
 use Lotus\Core\Domain\Model\Module;
 use Lotus\Core\Domain\Repository\ModuleRepository;
 use Lotus\Core\Infrastructure\Database\DML\ColumnWhereDML;
-use Lotus\Foo\Foo;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Zend\Diactoros\ServerRequestFactory;
+use Lotus\Core\Infrastructure\Event\Dispatcher as EventDispatcher;
+use Lotus\Core\Domain\Event\DispatcherInterface as EventDispatcherInterface;
+use Lotus\Core\Infrastructure\Event\Dispatcher;
 use Lotus\Core\Infrastructure\DI\Container;
 use Lotus\Core\Infrastructure\DI\ContainerBuilder;
 use Lotus\Core\Infrastructure\Http\Server\RequestHandler;
@@ -24,6 +26,11 @@ class Application
     protected $container;
 
     /**
+     * @var MiddlewareInterface[]
+     */
+    protected $middlewares;
+
+    /**
      * @var ClassLoader
      */
     protected $autoloader;
@@ -34,6 +41,11 @@ class Application
     protected $moduleRepository;
 
     /**
+     * @var Dispatcher
+     */
+    protected $eventDispatcher;
+
+    /**
      * Application constructor.
      *
      * @param ClassLoader $classLoader
@@ -42,6 +54,7 @@ class Application
     {
         $this->autoloader = $classLoader;
         $this->moduleRepository = new ModuleRepository();
+        $this->eventDispatcher = new EventDispatcher();
     }
 
     /**
@@ -63,9 +76,18 @@ class Application
         $containerBuilder->addDefinitions([
             ServerRequestInterface::class => ServerRequestFactory::fromGlobals(),
             RequestHandler::class => \DI\create(RequestHandler::class)->constructor([\DI\get(ResponseFactoryMiddleware::class)]),
-            ModuleRepository::class => $this->moduleRepository
+            ModuleRepository::class => $this->moduleRepository,
+            EventDispatcherInterface::class => \DI\create(EventDispatcher::class)
         ]);
         $this->container = $containerBuilder->build();
+    }
+
+    /**
+     * Initialize middleware
+     */
+    protected function initializeMiddleware(): void
+    {
+        $this->middlewares[] = $this->container->get(ResponseFactoryMiddleware::class);
     }
 
     /**
@@ -81,14 +103,12 @@ class Application
         }
 
         $this->initializeDIContainer();
+        $this->initializeMiddleware();
     }
 
     public function run(): void
     {
         $this->boot();
-
-            $this->container->get(Foo::class)->sayHello();
-            $this->container->get(Bar::class)->sayHello();
 
         $request = $this->container->get(ServerRequestInterface::class);
         $requestHandler = $this->container->get(RequestHandler::class);

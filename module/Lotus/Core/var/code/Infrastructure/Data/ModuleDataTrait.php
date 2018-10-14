@@ -14,5 +14,13 @@ trait ModuleDataTrait
             'version' => '1.0.0',
             'status' => Module::STATUS_ENABLED
         ],
+        'lotus/dummy' => [
+            'id' => 'lotus/dummy',
+            'path' => 'Lotus/Dummy',
+            'name' => 'Lotus Dummy Module',
+            'description' => 'Lotus Dummy Module',
+            'version' => '1.0.0',
+            'status' => Module::STATUS_ENABLED
+        ]
     ];
 }

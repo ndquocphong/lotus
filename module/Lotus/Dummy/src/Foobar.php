@@ -1,7 +1,7 @@
 <?php
-namespace Lotus\Bar;
+namespace Lotus\Dummy;
 
-class Bar
+class Foobar
 {
     public function sayHello()
     {
